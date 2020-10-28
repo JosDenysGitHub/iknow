@@ -180,7 +180,7 @@
 
 /* *** nå(go)nting ***
 
-340;40;"någonting"|SVAdvAdj:SVPart:SVAdvAdj;SVAttrpron|SVAdj;to avoid that prep-någonting becomes NR when någonting belongs to an adjective
+340;40;"någonting":"nånting"|SVAdvAdj:SVPart:SVAdvAdj;SVAttrpron|SVAdj;to avoid that prep-någonting becomes NR when någonting belongs to an adjective
 341;40;"någonting":"nånting"|SVCon;SVAttrpron|SVCon;same as previous rule: most adjectives are not labeled as such
 
 /* *** detsamma ***

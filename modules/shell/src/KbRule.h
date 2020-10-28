@@ -143,7 +143,7 @@ namespace iknow {
 				std::string value(begin_token + equal_sign_offset +1, end_token);
 				if (!key.compare("len")) {
 					int value_int = static_cast<int> (value[0] - '0'); // range is 0 to 9
-					if (value_int > 0 || value_int <= 9) lexrep_length_ = static_cast<short> (value_int);
+					if (value_int > 0 && value_int <= 9) lexrep_length_ = static_cast<short> (value_int);
 				}
 			}
 		}
@@ -336,8 +336,14 @@ namespace iknow {
 		if (phase > iknow::core::kMaxPhase)
 			throw ExceptionFrom<KbRule>("Illegal phase number found in rule.");
 		phase_ = phase;
-      } 
-
+      }
+	  KbRule(const KbRule& other) { // need explicit copy constructor to avoid random binary bytes
+		  this->input_pattern_begin_ = other.input_pattern_begin_;
+		  this->input_pattern_end_ = other.input_pattern_end_;
+		  this->output_pattern_begin_ = other.output_pattern_begin_;
+		  this->output_pattern_end_ = other.output_pattern_end_;
+		  this->phase_ = other.phase_;
+	  }
       const iknow::core::IkRuleInputPattern* InputPatternBegin() const { return input_pattern_begin_;  }
       const iknow::core::IkRuleInputPattern* InputPatternEnd() const { return input_pattern_end_; }
       const iknow::core::IkRuleOutputPattern* OutputPatternBegin() const { return output_pattern_begin_; }

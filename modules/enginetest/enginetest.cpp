@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** enginetest.cpp : testing the iKnow engine
 */
 #include <stdio.h>
@@ -19,19 +19,19 @@ inline String ucs2(const char* input_text) {
 	return String(IkStringEncoding::UTF8ToBase(input_text));
 }
 String getSampleText(std::string language_code) { // must be ucs-2 encoded text.
-	if (language_code == "en") return ucs2("Be the change you want to see in life.");
-	if (language_code == "de") return ucs2("Oder die Erkundung der Natur - und zwar ohne Anleitung.");
-	if (language_code == "ru") return ucs2("Микротерминатор может развивать скорость до 30 сантиметров за секунду, пишут калининградские СМИ.");
-	if (language_code == "es") return ucs2("En Argentina no hay estudios previos reportados en cuanto a la elaboración de vinos cítricos ni de «vino de naranja».");
-	if (language_code == "fr") return ucs2("En pratique comment le faire ?");
-	if (language_code == "ja") return ucs2("こんな台本でプロットされては困る、と先生は言った。");
-	if (language_code == "nl") return ucs2("Op basis van de afzonderlijke evaluatieverslagen stelt de Commissie een synthese op communautair niveau op.");
-	if (language_code == "pt") return ucs2("Distingue-se o mercado de um produto ou serviço dos mercados de fatores de produção, capital e trabalho.");
-	if (language_code == "sv") return ucs2("Jag är bäst i klassen. Ingen gör efter mig, kan jag inte lämna. Var försiktig, är gräset alltid grönare på andra sidan.");
-	if (language_code == "uk") return ucs2("грошових зобов'язань, прийнятих на себе згідно з умов цього договору.");
-	if (language_code == "cs") return ucs2("Létající jaguár je novela spisovatele Josefa Formánka z roku 2004.");
+	if (language_code == "en") return ucs2(u8"Be the change you want to see in life.");
+	if (language_code == "de") return ucs2(u8"Oder die Erkundung der Natur - und zwar ohne Anleitung.");
+	if (language_code == "ru") return ucs2(u8"Микротерминатор может развивать скорость до 30 сантиметров за секунду, пишут калининградские СМИ.");
+	if (language_code == "es") return ucs2(u8"En Argentina no hay estudios previos reportados en cuanto a la elaboración de vinos cítricos ni de «vino de naranja».");
+	if (language_code == "fr") return ucs2(u8"En pratique comment le faire ?");
+	if (language_code == "ja") return ucs2(u8"こんな台本でプロットされては困る、と先生は言った。");
+	if (language_code == "nl") return ucs2(u8"Op basis van de afzonderlijke evaluatieverslagen stelt de Commissie een synthese op communautair niveau op.");
+	if (language_code == "pt") return ucs2(u8"Distingue-se o mercado de um produto ou serviço dos mercados de fatores de produção, capital e trabalho.");
+	if (language_code == "sv") return ucs2(u8"Jag är bäst i klassen. Ingen gör efter mig, kan jag inte lämna. Var försiktig, är gräset alltid grönare på andra sidan.");
+	if (language_code == "uk") return ucs2(u8"грошових зобов'язань, прийнятих на себе згідно з умов цього договору.");
+	if (language_code == "cs") return ucs2(u8"Létající jaguár je novela spisovatele Josefa Formánka z roku 2004.");
 
-	return ucs2("Time flies like an arrow, fruit flies like a banana");
+	return ucs2(u8"Time flies like an arrow, fruit flies like a banana");
 }
 
 //
@@ -106,7 +106,7 @@ void a_short_demo(void);
 
 int main(int argc, char* argv[])
 {
-	testing::iKnowUnitTests::runUnitTests(); // first, verify the quality
+	testing::iKnowUnitTests::runUnitTests(); // first, run existing unit tests
 	
 	// currently supported languages : { "en", "de", "ru", "es", "fr", "ja", "nl", "pt", "sv", "uk", "cs" };
 	const std::set<std::string> languages_set = iKnowEngine::GetLanguagesSet();
@@ -123,6 +123,8 @@ int main(int argc, char* argv[])
 		os.close();
 
 		a_short_demo();
+
+		cout << endl << "*** All tests passed succesfully ***" << endl;
 	}
 	catch (std::exception& e)
 	{
@@ -131,6 +133,7 @@ int main(int argc, char* argv[])
 	catch (...) {
 		cerr << "Smart Indexer failed..." << std::endl;
 	}
+
 	return 0;
 }
 
@@ -162,8 +165,8 @@ void a_short_demo(void)
 	for (SentenceIterator it_sent = engine.m_index.sentences.begin(); it_sent != engine.m_index.sentences.end(); ++it_sent) { // loop over the sentences
 		const Sentence& sent = *it_sent; // get a sentence reference
 
-		const size_t start = sent.offset_start(); // start position of the text
-		const size_t stop = sent.offset_stop(); // stop position of the text
+		const size_t start = sent.offset_start(); // start position of the sentence
+		const size_t stop = sent.offset_stop(); // stop position of the sentence
 
 		String SentenceText(&Text_Source[start], &Text_Source[stop]); // reconstruct the sentence
 		std::string SentenceTextUtf8 = IkStringEncoding::BaseToUTF8(SentenceText); // convert it back to utf8
@@ -252,7 +255,7 @@ void a_short_demo(void)
 	for (Text_Source::Proximity::iterator itProx = engine.m_index.proximity.begin(); itProx != engine.m_index.proximity.end(); ++itProx) {
 		size_t id1 = itProx->first.first;
 		size_t id2 = itProx->first.second;
-		double proximity = itProx->second;
+		double proximity = static_cast<double>(itProx->second);
 
 		cout << "\"" << mapTextSource[id1] << "\":\"" << mapTextSource[id2] << "\"=" << proximity << endl;
 	}

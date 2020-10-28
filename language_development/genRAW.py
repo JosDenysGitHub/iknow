@@ -21,9 +21,9 @@ import time
 #
 # Following are default runtime parameters if no command line parameters are present.
 #
-in_path_par = "C:/P4/Users/jdenys/text_input_data/ja/"  # input directory with text files
+in_path_par = "C:/P4/Users/jdenys/text_input_data/en/"  # input directory with text files
 out_path_par = "C:/tmp/"                                # output directory to write the RAW file
-language_par = "ja"                                     # language selector
+language_par = "en"                                     # language selector
 OldStyle = True                                         # mimics the old-style RAW file format
 
 # print(sys.argv)
@@ -44,19 +44,21 @@ def write_ln(file_,text_):
 #
 from os import walk
 
-f = []  # non-recursive list of files
+f = []  # non-recursive list of files, .txt only
 for (dirpath, dirnames, filenames) in walk(in_path_par):
     for single_file in filenames:
-        full_path = dirpath + single_file
-        f.append(full_path)
+        if (single_file.endswith('.txt')):
+            full_path = dirpath + single_file
+            f.append(full_path)
     break
 
-f_rec = []  # recursive list of files
+f_rec = []  # recursive list of files, .txt only
 def collect_files_recursive(in_path_par):
     for (dirpath, dirnames, filenames) in walk(in_path_par):
         for single_file in filenames:
-            full_path = dirpath + single_file
-            f_rec.append(full_path)
+            if (single_file.endswith('.txt')):
+                full_path = dirpath + single_file
+                f_rec.append(full_path)
         for single_dir in dirnames:
             full_dir = dirpath + single_dir + "/"
             collect_files_recursive(full_dir)
@@ -97,17 +99,35 @@ for text_file in f_rec:
         #
         if OldStyle:
             sentence_raw = 'S\x01'
+            ent_stop = ''
             for entity in sent['entities']:
                 ent_type = entity['type']
                 lit_text = text[entity['offset_start']:entity['offset_stop']]
+                ent_start = entity['offset_start']
                 if ent_type == 'NonRelevant':
-                    sentence_raw = sentence_raw + lit_text
+                    if (ent_start != ent_stop):
+                        sentence_raw = sentence_raw + lit_text
+                    else:
+                        sentence_raw = sentence_raw.rstrip() + lit_text
+                    ent_stop = entity['offset_stop']
                 if ent_type == 'Concept':
-                    sentence_raw = sentence_raw + '\x02' + lit_text + '\x02'
+                    if(ent_start != ent_stop):
+                        sentence_raw = sentence_raw + '\x02' + lit_text + '\x02'
+                    else:
+                        sentence_raw = sentence_raw.rstrip() + '\x02' + lit_text + '\x02'
+                    ent_stop = entity['offset_stop']
                 if ent_type == 'Relation':
-                    sentence_raw = sentence_raw + '\x03' + lit_text + '\x03'
+                    if(ent_start != ent_stop):
+                        sentence_raw = sentence_raw + '\x03' + lit_text + '\x03'
+                    else:
+                        sentence_raw = sentence_raw.rstrip() + '\x03' + lit_text + '\x03'
+                    ent_stop = entity['offset_stop']
                 if ent_type == 'PathRelevant':
-                    sentence_raw = sentence_raw + (' ' if entity == sent['entities'][0] else '') + '<' + lit_text + '>'
+                    if(ent_start != ent_stop):
+                        sentence_raw = sentence_raw + (' ' if entity == sent['entities'][0] else '') + '<' + lit_text + '>'
+                    else:
+                        sentence_raw = sentence_raw.rstrip() + (' ' if entity == sent['entities'][0] else '') + '<' + lit_text + '>'
+                    ent_stop = entity['offset_stop']
 
                 if entity != sent['entities'][len(sent['entities'])-1]: # not for the last one
                     sentence_raw = sentence_raw + ' '
@@ -127,12 +147,17 @@ for text_file in f_rec:
         # sentence attributes
         #
         if (len(sent['sent_attributes'])):
-            # <attr type="time" literal="合格後" token="合格後">
             for sent_attribute in sent['sent_attributes']:
                 attr_name = sent_attribute['type'].lower()
+                attr_marker = sent_attribute['marker'] # corresponds to lexreps.csv match 
+                attr_entity = sent['entities'][sent_attribute['entity_ref']]['index'] # corresponding entity index value
+
+                attr_marker_literal = text[sent_attribute['offset_start']:sent_attribute['offset_stop']] # literal version of the marker
+                attr_entity_literal = text[sent['entities'][sent_attribute['entity_ref']]['offset_start']:sent['entities'][sent_attribute['entity_ref']]['offset_stop']] # corresponding entity index literal value
+
                 if (attr_name == 'datetime'):
                     attr_name = 'time'
-                sent_attribute_raw = '<attr type=\"' + attr_name + '\" literal=\"' + text[sent['entities'][sent_attribute['entity_ref']]['offset_start']:sent['entities'][sent_attribute['entity_ref']]['offset_stop']] + ('\" marker=\"' if OldStyle==False else '\" token=\"') + sent_attribute['marker'] + '\"'
+                sent_attribute_raw = '<attr type=\"' + attr_name + '\" literal=\"' + text[sent['entities'][sent_attribute['entity_ref']]['offset_start']:sent['entities'][sent_attribute['entity_ref']]['offset_stop']] + ('\" marker=\"' if OldStyle==False else '\" token=\"') + sent_attribute['marker'].lstrip() + '\"'
                 if sent_attribute['value']:
                    sent_attribute_raw = sent_attribute_raw + ' value=\"' + sent_attribute['value'] + '\"'
                 if sent_attribute['unit']:

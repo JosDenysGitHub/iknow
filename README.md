@@ -1,10 +1,12 @@
-[![Build Status](https://travis-ci.com/intersystems/iknow.svg?branch=master)](https://travis-ci.com/intersystems/iknow)
+[![Build Status](https://travis-ci.com/intersystems/iknow.svg?branch=master)](https://travis-ci.com/intersystems/iknow) [![PyPI version](https://img.shields.io/pypi/v/iknowpy?logo=pypi)](https://pypi.org/project/iknowpy) [![Python versions](https://img.shields.io/pypi/pyversions/iknowpy?logo=python)](https://pypi.org/project/iknowpy)
 
 # iKnow
 
 **iKnow** is a library for Natural Language Processing that identifies entities (phrases) and their semantic context in natural language text in English, German, Dutch, French, Spanish, Portuguese, Swedish, Russian, Ukrainian, Czech and Japanese. It was originally developed by [i.Know](https://www.linkedin.com/company/i.know/about/) in Belgium, acquired by [InterSystems](https://www.intersystems.com) in 2010 to be embedded in its Caché and [IRIS Data Platform](http://www.intersystems.com/iris) products. InterSystems published the iKnow engine as open source in 2020. 
 
-This readme file has the basic pointers to get started, but make sure you click through to the **[wiki](https://github.com/intersystems/iknow/wiki)** for more details on any of these subjects.
+[![Getting started with iKnow](https://img.youtube.com/vi/VkR6rcv4_aA/0.jpg)](https://www.youtube.com/watch?v=VkR6rcv4_aA)
+
+This readme file has everything you need to get started, but make sure you click through to the **[wiki](https://github.com/intersystems/iknow/wiki)** for more details on any of these subjects.
 
 - [Using iKnow](#using-iknow)
   - [From Python](#from-python)
@@ -14,7 +16,7 @@ This readme file has the basic pointers to get started, but make sure you click 
   - [Entities](#entities)
   - [Attributes](#attributes)
   - [How it works](#how-it-works)
-- [Building iKnow](#building-iknow)
+- [Building the iKnow Engine](#building-the-iknow-engine)
 - [Contributing to iKnow](#contributing-to-iknow)
 
 # Using iKnow
@@ -59,7 +61,7 @@ If you are looking for another programming language or interface, check out the 
 ## From C++
 ##
 
-The main C++ API file is `engine.h` (modules\engine\src), defining the class `iKnowEngine` with the main entry point:
+The main C++ API file is [engine.h](https://github.com/intersystems/iknow/blob/master/modules/engine/src/engine.h#L203), defining the class `iKnowEngine` with the main entry point:
 
 ```C++
 index(TextSource, language)
@@ -123,7 +125,7 @@ Some attributes are not available for all languages yet. See the [wiki section](
 ## How it works
 
 Some InterSystems-era resources on how iKnow works:
-- A recent [introductory video](https://www.youtube.com/watch?v=2pQur_PJn_w)
+- A recent [introductory video](https://www.youtube.com/watch?v=VkR6rcv4_aA)
 - A not-so-recent [playlist](https://www.youtube.com/watch?v=QfbqISDFC1s&list=PLp4xNHWZ7IQmUwbtvHsiZnn2nblxjug15&index=1) on our video channel
 - A fun animation of our unique bottom-up approach in [Japanese](https://www.youtube.com/watch?v=yOVP6visOfo) and [Russian](https://www.youtube.com/watch?v=dNJHWxgVr5I) (English version embedded [here](https://learning.intersystems.com/course/view.php?id=114))
 
