@@ -6,8 +6,9 @@
 # - Python for Windows
 # - Cython
 # - manylinux
-# In addition, whenever Travis CI updates its Mac OS X build machines so that a
-# new version of pyenv is available, we check for updates to Python on Mac OS X.
+# In addition, whenever GitHub Actions updates its Mac OS X build machines so
+# that a new version of pyenv is available, we check for updates to Python on
+# Mac OS X.
 #
 # For each dependency that has an update, we create a pull request containing a
 # single commit that updates the dependency.
@@ -20,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       PYENV_TOOL_VERSION_CURRENT:
-        description: 'current version of pyenv, as reported by Travis CI'
+        description: 'current version of pyenv, as reported by GitHub Actions'
         required: true
 
 jobs:
@@ -36,6 +37,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-ICU] update ICU from \"${{ env.ICU_NAME_OLD }}\" to \"${{ env.ICU_NAME_LATEST }}\""
           branch: autoupdate-ICU
           delete-branch: true
@@ -63,6 +65,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-buildcache] update buildcache from \"${{ env.BUILDCACHE_NAME_OLD }}\" to \"${{ env.BUILDCACHE_NAME_LATEST }}\""
           branch: autoupdate-buildcache
           delete-branch: true
@@ -86,6 +89,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-cython] update Cython from ${{ env.CYTHON_VERSION_OLD }} to ${{ env.CYTHON_VERSION_LATEST }}"
           branch: autoupdate-cython
           delete-branch: true
@@ -111,6 +115,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-manylinux] update manylinux: ${{ env.MANYLINUX_UPDATE_INFO_ONELINE }}"
           branch: autoupdate-manylinux
           delete-branch: true
@@ -136,6 +141,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-python-windows] update Python for Windows: ${{ env.PYTHON_UPDATE_INFO_ONELINE }}"
           branch: autoupdate-python-windows
           delete-branch: true
@@ -161,6 +167,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           assignees: isc-adang
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
           commit-message: "[autoupdate-python-osx] update Python for Mac OS X: ${{ env.PYTHON_UPDATE_INFO_ONELINE }}"
           branch: autoupdate-python-osx
           delete-branch: true

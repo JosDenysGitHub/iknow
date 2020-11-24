@@ -7,13 +7,14 @@
 # Usage: /iknow/travis/build_manylinux.sh
 #
 # Required Environment Variables:
+# - CCACHE_MAXSIZE is the size limit for files held with ccache
 # - PIP_CACHE_DIR is the location that pip caches files
 # - ICU_URL is the URL to a .zip source release of ICU
 
 set -euxo pipefail
 
 
-##### Install dependencies #####
+##### Install and configure dependencies #####
 # epel-release
 #   Needed on some platforms to install ccache.
 # dos2unix
@@ -36,6 +37,11 @@ ln -s /usr/bin/ccache /opt/ccache/c++
 ln -s /usr/bin/ccache /opt/ccache/gcc
 ln -s /usr/bin/ccache /opt/ccache/g++
 export PATH="/opt/ccache:$PATH"
+if [ "$PROCESSOR" = x86_64 ]; then
+  # On manylinux2010_x86_64, the version of ccache is too old to recognize the
+  # CCACHE_MAXSIZE environment variable, so set the max cache size manually.
+  ccache --max-size "$CCACHE_MAXSIZE"
+fi
 
 
 ##### Build ICU if it's not cached #####
@@ -83,21 +89,16 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/iknow/kit/$IKNOWPLAT/release/bin:$ICUD
 
 # install Python package dependencies and build initial wheels
 chown -R root "$PIP_CACHE_DIR"
-for PYTHON in /opt/python/cp35-cp35m/bin/python \
-              /opt/python/cp36-cp36m/bin/python \
-              /opt/python/cp37-cp37m/bin/python \
-              /opt/python/cp38-cp38/bin/python \
-              /opt/python/cp39-cp39/bin/python
+for PYTHON in /opt/python/{cp35-cp35m,cp36-cp36m,cp37-cp37m,cp38-cp38,cp39-cp39}/bin/python
 do
   "$PYTHON" -m pip install --user cython=="$CYTHON_VERSION" setuptools wheel --no-warn-script-location
   "$PYTHON" setup.py bdist_wheel --no-dependencies
 done
+"$PYTHON" setup.py merge --no-dependencies
 chmod -R a+rw "$PIP_CACHE_DIR"
 
-# repair wheels using auditwheel to convert to manylinux wheels
-for WHEEL in dist/iknowpy-*.whl; do
-  auditwheel repair "$WHEEL"
-done
+# repair wheel using auditwheel to convert to manylinux wheel
+auditwheel repair dist/merged/iknowpy-*.whl
 
 
 ##### Report cache statistics #####
